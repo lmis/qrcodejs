@@ -8,11 +8,13 @@
 </head>
 <body>
 <input id="text" type="text" placeholder="Input data"/><br />
+<svg id="svg" width="500" height="500">
+</svg>
 <canvas id="qrcode"/>
 
 <script type="text/javascript">
 const inputField = document.getElementById("text");
-inputField.oninput = () => QRCode.render(document.getElementById("qrcode"), 'H', inputField.value);
+inputField.oninput = () => QRCode.render(document.getElementById("svg"), 'H', inputField.value);
 
 </script>
 </body>
