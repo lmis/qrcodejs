@@ -1055,6 +1055,8 @@ var QRCode = {};
 
     var image = new Image();
     image.onload = function () {
+      outSvg.setAttribute("height", size);
+      outSvg.setAttribute("width", size);
       while (outSvg.lastChild) {
         outSvg.removeChild(outSvg.lastChild);
       }
