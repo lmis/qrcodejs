@@ -12,7 +12,7 @@
 
 <script type="text/javascript">
 const inputField = document.getElementById("text");
-inputField.oninput = () => QRCode.render(document.getElementById("svg"), 'H', inputField.value);
+inputField.oninput = () => QRCode.render(document.getElementById("svg"), inputField.value);
 
 </script>
 </body>
