@@ -1041,7 +1041,6 @@ var QRCode = {};
 
   QRCode.render = function (outSvg, correctionLevel, data) {
     var correctionLevel = "M";
-    var size = 500;
     var model = new QRCodeModel(
       _getTypeNumber(data, QRErrorCorrectLevel[correctionLevel]),
       QRErrorCorrectLevel[correctionLevel]
@@ -1050,13 +1049,15 @@ var QRCode = {};
     model.make();
 
     // number of modules in each dimension
+    var height = outSvg.getAttribute("height");
+    var width = outSvg.getAttribute("width");
+
     var moduleCount = model.getModuleCount();
-    var pixelSize = size / moduleCount;
+    var pixelHeight = height / moduleCount;
+    var pixelWidth = width / moduleCount;
 
     var image = new Image();
     image.onload = function () {
-      outSvg.setAttribute("height", size);
-      outSvg.setAttribute("width", size);
       while (outSvg.lastChild) {
         outSvg.removeChild(outSvg.lastChild);
       }
@@ -1078,8 +1079,8 @@ var QRCode = {};
                 "http://www.w3.org/2000/svg",
                 "rect"
               );
-              pixel.setAttributeNS(null, "width", pixelSize * 1.01);
-              pixel.setAttributeNS(null, "height", pixelSize * 1.01);
+              pixel.setAttributeNS(null, "width", pixelWidth * 1.01);
+              pixel.setAttributeNS(null, "height", pixelHeight * 1.01);
               pixel.setAttributeNS(null, "fill", "#000000");
               pixel.setAttributeNS(null, "id", "pixel");
             } else {
@@ -1090,8 +1091,8 @@ var QRCode = {};
               pixel.setAttributeNS(null, "href", "#pixel");
             }
 
-            pixel.setAttributeNS(null, "x", row * pixelSize);
-            pixel.setAttributeNS(null, "y", col * pixelSize);
+            pixel.setAttributeNS(null, "x", row * pixelWidth);
+            pixel.setAttributeNS(null, "y", col * pixelHeight);
             outSvg.appendChild(pixel);
           }
         }
@@ -1101,8 +1102,8 @@ var QRCode = {};
         "http://www.w3.org/2000/svg",
         "image"
       );
-      overlay.setAttributeNS(null, "x", size / 2 - image.width / 2);
-      overlay.setAttributeNS(null, "y", size / 2 - image.height / 2);
+      overlay.setAttributeNS(null, "x", width / 2 - image.width / 2);
+      overlay.setAttributeNS(null, "y", height / 2 - image.height / 2);
       overlay.setAttributeNS(null, "href", dataURI);
       outSvg.appendChild(overlay);
     };
