@@ -1053,17 +1053,19 @@ var QRCode = {};
     var svgHeight = outSvg.getAttribute("height");
     var svgWidth = outSvg.getAttribute("width");
 
-    // account for 4 module padding
-    var pixelHeight = svgHeight / (moduleCount + 8);
-    var pixelWidth = svgWidth / (moduleCount + 8);
-    var xPad = 4 * pixelWidth;
-    var yPad = 4 * pixelHeight;
-    var height = moduleCount * pixelHeight;
-    var width = moduleCount * pixelWidth;
+    // Account for padding. It should be 5mm of padding on either side for a 46mm QR code
+    var padding = 5; // Output should have 5mm of padding on each side
+    var qrSize = 46; // QR code portion of output should be 46mm wide
+    var overlaySize = 7; // Overlay should be 7mm wide.
+    var totalSize = 2 * padding + qrSize; // Total output should be 56mm wide
+    var pixelHeight = ((qrSize / totalSize) * svgHeight) / moduleCount;
+    var pixelWidth = ((qrSize / totalSize) * svgWidth) / moduleCount;
+    var xPad = (padding / totalSize) * svgWidth;
+    var yPad = (padding / totalSize) * svgHeight;
 
     // image to QR code ratio
-    var overlayHeight = (7 / 46) * height;
-    var overlayWidth = (7 / 46) * width;
+    var overlayHeight = (overlaySize / totalSize) * svgHeight;
+    var overlayWidth = (overlaySize / totalSize) * svgWidth;
 
     while (outSvg.lastChild) {
       outSvg.removeChild(outSvg.lastChild);
@@ -1101,8 +1103,8 @@ var QRCode = {};
     );
     overlay.setAttributeNS(null, "width", overlayWidth);
     overlay.setAttributeNS(null, "heigth", overlayHeight);
-    overlay.setAttributeNS(null, "x", xPad + width / 2 - overlayWidth / 2);
-    overlay.setAttributeNS(null, "y", yPad + height / 2 - overlayHeight / 2);
+    overlay.setAttributeNS(null, "x", svgWidth / 2 - overlayWidth / 2);
+    overlay.setAttributeNS(null, "y", svgHeight / 2 - overlayHeight / 2);
     overlay.setAttributeNS(null, "href", dataURI);
     outSvg.appendChild(overlay);
   };

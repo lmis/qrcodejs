@@ -11,9 +11,10 @@
     <svg id="svg" width="500" height="500"/>
 
     <script type="text/javascript">
-    const inputField = document.getElementById("text");
-    inputField.oninput = () => QRCode.render(document.getElementById("svg"), inputField.value);
-
+      const inputField = document.getElementById("text");
+      // svg height and width should be chosen such that they map onto 56mm (46mm QR code + 5mm padding on each side)
+      // -> height = 56 * DPI / 25.4
+      inputField.oninput = () => QRCode.render(document.getElementById("svg"), inputField.value);
     </script>
   </body>
 </html>
