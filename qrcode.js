@@ -1049,16 +1049,21 @@ var QRCode = {};
     model.make();
 
     // number of modules in each dimension
-    var height = outSvg.getAttribute("height");
-    var width = outSvg.getAttribute("width");
+    var moduleCount = model.getModuleCount();
+    var svgHeight = outSvg.getAttribute("height");
+    var svgWidth = outSvg.getAttribute("width");
+
+    // account for 4 module padding
+    var pixelHeight = svgHeight / (moduleCount + 8);
+    var pixelWidth = svgWidth / (moduleCount + 8);
+    var xPad = 4 * pixelWidth;
+    var yPad = 4 * pixelHeight;
+    var height = moduleCount * pixelHeight;
+    var width = moduleCount * pixelWidth;
 
     // image to QR code ratio
     var overlayHeight = (7 / 46) * height;
     var overlayWidth = (7 / 46) * width;
-
-    var moduleCount = model.getModuleCount();
-    var pixelHeight = height / moduleCount;
-    var pixelWidth = width / moduleCount;
 
     while (outSvg.lastChild) {
       outSvg.removeChild(outSvg.lastChild);
@@ -1067,24 +1072,22 @@ var QRCode = {};
     var pixel;
     for (var row = 0; row < moduleCount; row++) {
       for (var col = 0; col < moduleCount; col++) {
-        if (model.isDark(row, col)) {
-          if (!pixel) {
-            pixel = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "rect"
-            );
-            pixel.setAttributeNS(null, "width", pixelWidth * 1.01);
-            pixel.setAttributeNS(null, "height", pixelHeight * 1.01);
-            pixel.setAttributeNS(null, "fill", "#000000");
-            pixel.setAttributeNS(null, "id", "pixel");
-          } else {
-            pixel = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "use"
-            );
-            pixel.setAttributeNS(null, "href", "#pixel");
-          }
-
+        if (row === 0 && col === 0) {
+          pixel = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "rect"
+          );
+          pixel.setAttributeNS(null, "width", pixelWidth * 1.015);
+          pixel.setAttributeNS(null, "height", pixelHeight * 1.015);
+          pixel.setAttributeNS(null, "fill", "#000000");
+          pixel.setAttributeNS(null, "id", "pixel");
+          pixel.setAttributeNS(null, "x", xPad);
+          pixel.setAttributeNS(null, "y", yPad);
+          outSvg.appendChild(pixel);
+        } else if (model.isDark(row, col)) {
+          pixel = document.createElementNS("http://www.w3.org/2000/svg", "use");
+          pixel.setAttributeNS(null, "href", "#pixel");
+          // No padding needed since position is relative to referenced element
           pixel.setAttributeNS(null, "x", row * pixelWidth);
           pixel.setAttributeNS(null, "y", col * pixelHeight);
           outSvg.appendChild(pixel);
@@ -1098,8 +1101,8 @@ var QRCode = {};
     );
     overlay.setAttributeNS(null, "width", overlayWidth);
     overlay.setAttributeNS(null, "heigth", overlayHeight);
-    overlay.setAttributeNS(null, "x", width / 2 - overlayWidth / 2);
-    overlay.setAttributeNS(null, "y", height / 2 - overlayHeight / 2);
+    overlay.setAttributeNS(null, "x", xPad + width / 2 - overlayWidth / 2);
+    overlay.setAttributeNS(null, "y", yPad + height / 2 - overlayHeight / 2);
     overlay.setAttributeNS(null, "href", dataURI);
     outSvg.appendChild(overlay);
   };
